@@ -42,9 +42,7 @@ OP* BFS_GRAPH(OP* root, int goal) {
 	BST created = BST(root, NULL);
 	frontier.enqueue(root);
 	if (frontier.size() < 1) {
-		std::cout << "Error, frontier cannot be empty at the begining of the "
-					 "algorithm"
-				  << std::endl;
+		std::cout << "Error, frontier cannot be empty" << std::endl;
 		return NULL;
 	}
 	while (frontier.size() > 0) {
