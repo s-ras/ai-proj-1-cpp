@@ -21,6 +21,55 @@ void OP::expand() {
 	this->right = new OP(d_times_two, "times_two", this);
 }
 
+void OP::expand_with_bst(BST* created, std::queue<OP*>& frontier) {
+	double d_sqrt = sqrt(this->data);
+	double d_floor = floor(this->data);
+	double d_times_two = this->data * 2;
+
+	if (!created->includes_double(d_sqrt)) {
+		this->left = new OP(d_sqrt, "sqrt", this);
+		frontier.push(this->left);
+		created->insert(this->left);
+	}
+
+	if (!created->includes_double(d_floor)) {
+		this->middle = new OP(d_floor, "floor", this);
+		frontier.push(this->middle);
+		created->insert(this->middle);
+	}
+
+	if (!created->includes_double(d_times_two)) {
+		this->right = new OP(d_times_two, "times_two", this);
+		frontier.push(this->right);
+		created->insert(this->right);
+	}
+}
+
+void OP::expand_with_map(std::unordered_map<double, OP*>& created,
+						 std::queue<OP*>& frontier) {
+	double d_sqrt = sqrt(this->data);
+	double d_floor = floor(this->data);
+	double d_times_two = this->data * 2;
+
+	if (created.find(d_sqrt) == created.end()) {
+		this->left = new OP(d_sqrt, "sqrt", this);
+		frontier.push(this->left);
+		created[d_sqrt] = this->left;
+	}
+
+	if (created.find(d_floor) == created.end()) {
+		this->middle = new OP(d_floor, "floor", this);
+		frontier.push(this->middle);
+		created[d_floor] = this->middle;
+	}
+
+	if (created.find(d_times_two) == created.end()) {
+		this->right = new OP(d_times_two, "times_two", this);
+		frontier.push(this->right);
+		created[d_times_two] = this->right;
+	}
+}
+
 void OP::print_path() {
 	std::stack<OP*> s;
 
@@ -80,12 +129,26 @@ void BST::insert(OP* op) {
 	}
 }
 
-bool BST::includes(OP* op) {
+bool BST::includes_node(OP* op) {
 	BST* current = this;
 	while (current != NULL) {
 		if (current->op->data == op->data) {
 			return true;
 		} else if (current->op->data > op->data) {
+			current = current->left;
+		} else {
+			current = current->right;
+		}
+	}
+	return false;
+}
+
+bool BST::includes_double(double d) {
+	BST* current = this;
+	while (current != NULL) {
+		if (current->op->data == d) {
+			return true;
+		} else if (current->op->data > d) {
 			current = current->left;
 		} else {
 			current = current->right;

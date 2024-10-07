@@ -8,6 +8,9 @@
 #include <unordered_map>
 #include <vector>
 
+class BST;
+class OP;
+
 class OP {
   public:
 	double data;
@@ -22,6 +25,9 @@ class OP {
 	OP(double, std::string, OP*);
 
 	void expand();
+	void expand_with_map(std::unordered_map<double, OP*>&, std::queue<OP*>&);
+	void expand_with_bst(BST*, std::queue<OP*>&);
+
 	void print_path();
 };
 
@@ -37,7 +43,9 @@ class BST {
 	BST(OP*, BST*);
 
 	void insert(OP*);
-	bool includes(OP*);
+
+	bool includes_node(OP*);
+	bool includes_double(double);
 };
 
 #endif

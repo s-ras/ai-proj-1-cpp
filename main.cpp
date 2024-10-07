@@ -55,7 +55,7 @@ void gather_input(int& goal, int& alg) {
 
 OP* UNIFIED_BFS_GRAPH_WITH_BST(OP* root, int goal) {
 	std::queue<OP*> frontier;
-	BST created = BST(root, NULL);
+	BST* created = new BST(root, NULL);
 	frontier.push(root);
 	while (frontier.size() > 0) {
 		OP* op = frontier.front();
@@ -63,19 +63,7 @@ OP* UNIFIED_BFS_GRAPH_WITH_BST(OP* root, int goal) {
 		if (op->data == goal) {
 			return op;
 		} else {
-			op->expand();
-			if (!created.includes(op->left)) {
-				frontier.push(op->left);
-				created.insert(op->left);
-			}
-			if (!created.includes(op->middle)) {
-				frontier.push(op->middle);
-				created.insert(op->middle);
-			}
-			if (!created.includes(op->right)) {
-				frontier.push(op->right);
-				created.insert(op->right);
-			}
+			op->expand_with_bst(created, frontier);
 		}
 	}
 	std::cout << "No solution was found" << std::endl;
@@ -92,19 +80,7 @@ OP* UNIFIED_BFS_GRAPH_WITH_HASH_MAP(OP* root, int goal) {
 		if (op->data == goal) {
 			return op;
 		} else {
-			op->expand();
-			if (created.find(op->left->data) == created.end()) {
-				frontier.push(op->left);
-				created[op->left->data] = op->left;
-			}
-			if (created.find(op->middle->data) == created.end()) {
-				frontier.push(op->middle);
-				created[op->middle->data] = op->middle;
-			}
-			if (created.find(op->right->data) == created.end()) {
-				frontier.push(op->right);
-				created[op->middle->data] = op->middle;
-			}
+			op->expand_with_map(created, frontier);
 		}
 	}
 	std::cout << "No solution was found" << std::endl;
