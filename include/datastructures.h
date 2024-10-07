@@ -3,6 +3,8 @@
 
 #include <math.h>
 #include <iostream>
+#include <queue>
+#include <stack>
 #include <unordered_map>
 #include <vector>
 
@@ -21,26 +23,6 @@ class OP {
 
 	void expand();
 	void print_path();
-};
-
-class Stack {
-  private:
-	std::vector<OP*> stack;
-
-  public:
-	int size();
-	void push(OP*);
-	OP* pop();
-};
-
-class Queue {
-  private:
-	std::vector<OP*> queue;
-
-  public:
-	int size();
-	void enqueue(OP*);
-	OP* dequeue();
 };
 
 class BST {

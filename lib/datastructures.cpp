@@ -22,7 +22,7 @@ void OP::expand() {
 }
 
 void OP::print_path() {
-	Stack s;
+	std::stack<OP*> s;
 
 	OP* current = this;
 
@@ -32,7 +32,8 @@ void OP::print_path() {
 	}
 
 	while (s.size() > 0) {
-		OP* op = s.pop();
+		OP* op = s.top();
+		s.pop();
 		if (op->type == "root") {
 			std::cout << "start at " << op->data << std::endl;
 		} else if (op->type == "sqrt") {
@@ -45,35 +46,6 @@ void OP::print_path() {
 			std::cout << op->parent->data << " * 2 = " << op->data << std::endl;
 		}
 	}
-}
-
-void Stack::push(OP* op) {
-	stack.push_back(op);
-}
-
-OP* Stack::pop() {
-	OP* top = stack.back();
-	stack.pop_back();
-
-	return top;
-}
-
-int Stack::size() {
-	return this->stack.size();
-}
-
-void Queue::enqueue(OP* op) {
-	queue.push_back(op);
-}
-
-OP* Queue::dequeue() {
-	OP* front = queue.front();
-	queue.erase(queue.begin());
-	return front;
-}
-
-int Queue::size() {
-	return this->queue.size();
 }
 
 BST::BST(OP* op, BST* parent) {

@@ -3,14 +3,16 @@
 
 const int START = 4;
 
-void gather_input(int&);
+void gather_input(int&, int&);
 
-OP* BFS_GRAPH(OP*, int);
+OP* UNIFIED_BFS_GRAPH_WITH_BST(OP*, int);
+
+OP* UNIFIED_BFS_GRAPH_WITH_HASH_MAP(OP*, int);
 
 int main() {
-	int goal;
+	int goal, alg;
 
-	gather_input(goal);
+	gather_input(goal, alg);
 
 	OP* root = new OP(START, "root", NULL);
 
@@ -18,7 +20,17 @@ int main() {
 
 	auto start = std::chrono::high_resolution_clock::now();
 
-	solution = BFS_GRAPH(root, goal);
+	switch (alg) {
+		case 1:
+			solution = UNIFIED_BFS_GRAPH_WITH_BST(root, goal);
+			break;
+		case 2:
+			solution = UNIFIED_BFS_GRAPH_WITH_HASH_MAP(root, goal);
+			break;
+		default:
+			std::cout << "Invalid algorithm" << std::endl;
+			exit(1);
+	}
 
 	auto end = std::chrono::high_resolution_clock::now();
 
@@ -32,36 +44,66 @@ int main() {
 	return 0;
 }
 
-void gather_input(int& goal) {
-	std::cout << "Which number are you trying to reach?\t";
+void gather_input(int& goal, int& alg) {
+	std::cout << "Which algorithm would you like to use?" << std::endl;
+	std::cout << "1. BFS with BST" << std::endl;
+	std::cout << "2. BFS with Hash Map" << std::endl;
+	std::cin >> alg;
+	std::cout << "Which number are you trying to reach? ";
 	std::cin >> goal;
 }
 
-OP* BFS_GRAPH(OP* root, int goal) {
-	Queue frontier;
+OP* UNIFIED_BFS_GRAPH_WITH_BST(OP* root, int goal) {
+	std::queue<OP*> frontier;
 	BST created = BST(root, NULL);
-	frontier.enqueue(root);
-	if (frontier.size() < 1) {
-		std::cout << "Error, frontier cannot be empty" << std::endl;
-		return NULL;
-	}
+	frontier.push(root);
 	while (frontier.size() > 0) {
-		OP* op = frontier.dequeue();
+		OP* op = frontier.front();
+		frontier.pop();
 		if (op->data == goal) {
 			return op;
 		} else {
 			op->expand();
 			if (!created.includes(op->left)) {
-				frontier.enqueue(op->left);
+				frontier.push(op->left);
 				created.insert(op->left);
 			}
 			if (!created.includes(op->middle)) {
-				frontier.enqueue(op->middle);
+				frontier.push(op->middle);
 				created.insert(op->middle);
 			}
 			if (!created.includes(op->right)) {
-				frontier.enqueue(op->right);
+				frontier.push(op->right);
 				created.insert(op->right);
+			}
+		}
+	}
+	std::cout << "No solution was found" << std::endl;
+	return NULL;
+}
+
+OP* UNIFIED_BFS_GRAPH_WITH_HASH_MAP(OP* root, int goal) {
+	std::queue<OP*> frontier;
+	std::unordered_map<double, OP*> created;
+	frontier.push(root);
+	while (frontier.size() > 0) {
+		OP* op = frontier.front();
+		frontier.pop();
+		if (op->data == goal) {
+			return op;
+		} else {
+			op->expand();
+			if (created.find(op->left->data) == created.end()) {
+				frontier.push(op->left);
+				created[op->left->data] = op->left;
+			}
+			if (created.find(op->middle->data) == created.end()) {
+				frontier.push(op->middle);
+				created[op->middle->data] = op->middle;
+			}
+			if (created.find(op->right->data) == created.end()) {
+				frontier.push(op->right);
+				created[op->middle->data] = op->middle;
 			}
 		}
 	}
